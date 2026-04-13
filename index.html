@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLING — AI-telefonagenter med personlighet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-dark: #0f1923;
+  --bg-section: #f8f8f6;
+  --bg-white: #ffffff;
+  --text-white: #ffffff;
+  --text-dark: #1a1a1a;
+  --text-muted: #6b7280;
+  --accent: #e85d3a;
+  --accent-hover: #d14e2d;
+  --border: #e5e7eb;
+  --card-bg: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  width: calc(100% - 32px); max-width: 1200px;
+  background: rgba(15, 25, 35, 0.92);
+  backdrop-filter: blur(20px);
+  border-radius: 60px;
+  padding: 12px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 100;
+}
+nav .logo {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700; font-size: 22px;
+  color: var(--text-white); letter-spacing: -0.5px;
+}
+nav .logo span { color: var(--accent); }
+nav ul { list-style: none; display: flex; gap: 28px; }
+nav ul li a {
+  color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; font-weight: 500;
+  transition: color 0.2s;
+}
+nav ul li a:hover { color: #fff; }
+nav .cta-nav {
+  background: var(--accent); color: #fff; border: none; border-radius: 40px;
+  padding: 10px 24px; font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background 0.2s;
+}
+nav .cta-nav:hover { background: var(--accent-hover); }
+
+/* HERO */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  background: linear-gradient(160deg, #0f1923 0%, #1a3040 40%, #1e3a4c 70%, #0f1923 100%);
+  overflow: hidden;
+  padding: 120px 24px 80px;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(232, 93, 58, 0.08), transparent);
+  pointer-events: none;
+}
+.hero-video {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0.35;
+}
+.hero-content { position: relative; z-index: 2; max-width: 800px; }
+.hero h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 600;
+  color: var(--text-white);
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 24px;
+}
+.hero .subtitle {
+  font-size: clamp(16px, 2vw, 19px);
+  color: rgba(255,255,255,0.75);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto 40px;
+}
+.hero .cta-hero {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff; border: none; border-radius: 50px;
+  padding: 16px 36px; font-size: 17px; font-weight: 600; cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  text-decoration: none;
+}
+.hero .cta-hero:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.hero .cta-hero svg { width: 18px; height: 18px; }
+.hero .trust-line {
+  margin-top: 20px;
+  font-size: 14px; color: rgba(255,255,255,0.5);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.hero .trust-line svg { width: 16px; height: 16px; stroke: rgba(255,255,255,0.5); fill: none; }
+
+/* Pulse rings behind hero */
+.pulse-ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(232, 93, 58, 0.12);
+  animation: pulse-grow 6s ease-in-out infinite;
+}
+.pulse-ring:nth-child(1) { width: 300px; height: 300px; top: 50%; left: 50%; margin: -150px 0 0 -150px; }
+.pulse-ring:nth-child(2) { width: 500px; height: 500px; top: 50%; left: 50%; margin: -250px 0 0 -250px; animation-delay: 1.5s; }
+.pulse-ring:nth-child(3) { width: 700px; height: 700px; top: 50%; left: 50%; margin: -350px 0 0 -350px; animation-delay: 3s; }
+@keyframes pulse-grow {
+  0%, 100% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+/* SECTIONS */
+section { padding: 100px 24px; }
+.container { max-width: 900px; margin: 0 auto; }
+section h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600; letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+section .section-lead {
+  font-size: 18px; color: var(--text-muted); margin-bottom: 48px;
+  max-width: 640px;
+}
+section p { font-size: 16px; line-height: 1.75; margin-bottom: 20px; }
+
+/* Alternating backgrounds */
+.bg-light { background: var(--bg-section); }
+.bg-white { background: var(--bg-white); }
+.bg-dark { background: var(--bg-dark); color: var(--text-white); }
+.bg-dark h2 { color: var(--text-white); }
+.bg-dark .section-lead { color: rgba(255,255,255,0.6); }
+.bg-dark p { color: rgba(255,255,255,0.8); }
+
+/* TWO-COL GRID */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+.two-col .col {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px; padding: 32px;
+}
+.two-col .col h3 {
+  font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 600;
+  margin-bottom: 12px;
+}
+.two-col .col p { font-size: 15px; margin-bottom: 0; }
+
+/* FLOW STEPS */
+.flow-steps { margin-top: 40px; }
+.flow-step {
+  display: grid; grid-template-columns: 80px 1fr; gap: 16px;
+  align-items: start; margin-bottom: 32px;
+  padding-bottom: 32px; border-bottom: 1px solid var(--border);
+}
+.flow-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.flow-step .step-label {
+  font-size: 13px; font-weight: 600; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 1px; padding-top: 2px;
+}
+.flow-step h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.flow-step p { font-size: 15px; color: var(--text-muted); margin-bottom: 0; }
+
+/* AGENT CARDS */
+.agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+.agent-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: box-shadow 0.2s;
+}
+.agent-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+.agent-card .emoji { font-size: 32px; margin-bottom: 12px; }
+.agent-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+.agent-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 8px; }
+.agent-card .tag {
+  display: inline-block; font-size: 12px; font-weight: 500;
+  background: rgba(232,93,58,0.08); color: var(--accent);
+  padding: 4px 10px; border-radius: 20px; margin-top: 8px;
+}
+
+/* DELIVERY LIST */
+.delivery-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 40px; }
+.delivery-item {
+  padding: 24px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+}
+.delivery-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: #fff; }
+.delivery-item p { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 0; }
+
+/* PRICING */
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 40px; }
+.price-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+}
+.price-card.featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.price-card h3 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+.price-card .price {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 600; margin-bottom: 4px;
+}
+.price-card .price-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+.price-card ul { list-style: none; }
+.price-card ul li {
+  font-size: 14px; padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.price-card ul li:last-child { border-bottom: none; }
+.price-card ul li::before { content: '\2713'; color: var(--accent); font-weight: 700; }
+
+/* ONBOARDING */
+.onboard-steps { margin-top: 40px; counter-reset: step; }
+.onboard-step {
+  display: grid; grid-template-columns: 48px 1fr; gap: 20px;
+  margin-bottom: 28px; align-items: start;
+}
+.onboard-step .num {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 18px; flex-shrink: 0;
+}
+.onboard-step h3 { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.onboard-step p { font-size: 14px; color: var(--text-muted); margin-bottom: 0; }
+
+/* FAQ */
+.faq-list { margin-top: 40px; }
+.faq-item { padding: 24px 0; border-bottom: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: none; }
+.faq-item h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.faq-item p { font-size: 15px; color: var(--text-muted); margin-bottom: 0; }
+
+/* TECH STACK */
+.stack-row {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px;
+}
+.stack-tag {
+  padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+}
+
+/* CONTACT / FOOTER */
+footer {
+  background: var(--bg-dark); color: var(--text-white);
+  padding: 80px 24px;
+  text-align: center;
+}
+footer h2 { color: var(--text-white); margin-bottom: 24px; }
+footer p { color: rgba(255,255,255,0.6); font-size: 15px; margin-bottom: 8px; }
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+footer .contact-line { margin-bottom: 6px; }
+footer .footer-bottom {
+  margin-top: 48px; padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 13px; color: rgba(255,255,255,0.35);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  nav ul { display: none; }
+  .two-col, .agent-grid, .pricing-grid { grid-template-columns: 1fr; }
+  .delivery-grid { grid-template-columns: 1fr 1fr; }
+  .flow-step { grid-template-columns: 1fr; }
+  .flow-step .step-label { margin-bottom: -8px; }
+}
+@media (max-width: 480px) {
+  .delivery-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span>P</span>LING</div>
+  <ul>
+    <li><a href="#hur-det-funkar">Så funkar det</a></li>
+    <li><a href="#branscher">Branscher</a></li>
+    <li><a href="#pris">Pris</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <button class="cta-nav" onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'})">Boka demo</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline poster="">
+    <source src="hero-bg.mp4" type="video/mp4">
+  </video>
+  <div class="pulse-ring"></div>
+  <div class="pulse-ring"></div>
+  <div class="pulse-ring"></div>
+  <div class="hero-content">
+    <h1>Ge ditt företag en röst som aldrig sover</h1>
+    <p class="subtitle">
+      Telefonsamtal besvarade. Beställningar tagna. Du notifierad &mdash; direkt i Telegram, SMS eller e-post.<br>Från 2 900 kr/mån.
+    </p>
+    <a href="#kontakt" class="cta-hero">
+      Boka demo
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+    </a>
+    <div class="trust-line">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      Under 1 sek svarstid &nbsp;&middot;&nbsp; 24/7 &nbsp;&middot;&nbsp; Riktig svenska
+    </div>
+  </div>
+</section>
+
+<!-- VAD PLING AR -->
+<section class="bg-white">
+  <div class="container">
+    <h2>Vad PLING är</h2>
+    <p>PLING är en AI-telefonagent som svarar åt ditt företag. Inte en telefonmeny. Inte "tryck 1". Ett riktigt samtal på svenska, med en röst och personlighet som passar din verksamhet.</p>
+    <p>Agenten tar beställningar, bokar tider, svarar på frågor och kopplar vidare till personal vid behov. 24/7, under en sekund svarstid, ingen telefonkö.</p>
+    <p><strong>Och det stannar inte vid samtalet.</strong> Efter varje samtal får du en sammanfattning &mdash; transkript, orderdata, kundinfo &mdash; levererad direkt till dig via den kanal du väljer: Telegram, SMS, e-post eller dashboard. Kunden får en SMS-bekräftelse. Inget faller mellan stolarna.</p>
+  </div>
+</section>
+
+<!-- SJAL + HJARNA -->
+<section class="bg-dark" id="hur-det-funkar">
+  <div class="container">
+    <h2>Själ + Hjärna</h2>
+    <p class="section-lead">Varje PLING-agent har två lager som tillsammans skapar ett samtal som känns naturligt &mdash; och blir rätt.</p>
+    <div class="two-col">
+      <div class="col">
+        <h3>Själ</h3>
+        <p>Personlighet, ton, röst, språkmönster. Hur agenten låter och känns. Italiensk pizzabagare med charm? Torr svensk bilhandlare? Lugn tandläkarreceptionist? Själen skräddarsys per kund.</p>
+      </div>
+      <div class="col">
+        <h3>Hjärna</h3>
+        <p>Affärslogik, meny, priser, öppettider, lediga tider, regler, arbetsflöden. Allt agenten behöver för att göra sitt jobb. Hjärnan uppdateras löpande när verksamheten ändras.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SA FUNKAR DET -->
+<section class="bg-white">
+  <div class="container">
+    <h2>Samtalsflödet</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="step-label">Samtal</div>
+        <div>
+          <h3>Kunden ringer — PLING svarar</h3>
+          <p>Kund ringer &rarr; PLING svarar inom 1 sekund &rarr; tal transkriberas i realtid &rarr; agenten svarar med sin röst &rarr; under 500ms per tur.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-label">Rapport</div>
+        <div>
+          <h3>Du får allt &mdash; i din kanal</h3>
+          <p>Webhook triggar direkt efter samtalet &rarr; du får transkript + ordersammanfattning + länk till inspelning i den kanal du valt (Telegram, SMS, e-post, dashboard) &rarr; kunden får SMS-bekräftelse &rarr; CRM uppdateras om kopplat.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-label">Eskalering</div>
+        <div>
+          <h3>Vidarekoppling med kontext</h3>
+          <p>Agenten kopplar till personal när som helst &mdash; om kunden begär det, om ärendet är för komplext, eller vid nödsituation. Med kontext, inte en kall överföring.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANSCHER -->
+<section class="bg-light" id="branscher">
+  <div class="container">
+    <h2>Fyra branscher, fyra agenter</h2>
+    <p class="section-lead">Varje agent har en unik Själ och Hjärna. Här är fyra demo-agenter vi byggt.</p>
+    <div class="agent-grid">
+      <div class="agent-card">
+        <div class="emoji">&#127829;</div>
+        <h3>Roma Pizzeria</h3>
+        <p><strong>Själ:</strong> Italiensk kille, 15 år i Sverige. Charm, "perfetto!", sjungande ton.</p>
+        <p><strong>Hjärna:</strong> 130+ rätter med priser, tillval, öppettider. Tar beställning, bekräftar pris.</p>
+        <span class="tag">Du får ordern i Telegram &mdash; kunden får SMS</span>
+      </div>
+      <div class="agent-card">
+        <div class="emoji">&#128663;</div>
+        <h3>Göran &mdash; Bilhandlare</h3>
+        <p><strong>Själ:</strong> Klassisk svensk bilhandlare. Jordnära, torr humor.</p>
+        <p><strong>Hjärna:</strong> Bilager med märke/år/miltal/pris, provkörningsbokning, finansiering, inbyte.</p>
+        <span class="tag">Du får lead-notis direkt</span>
+      </div>
+      <div class="agent-card">
+        <div class="emoji">&#129463;</div>
+        <h3>Lisa &mdash; Tandläkare</h3>
+        <p><strong>Själ:</strong> Lugn receptionist. Professionell, trygg, empati vid tandvärk.</p>
+        <p><strong>Hjärna:</strong> Lediga tider per behandlare, priser, akuthantering, högkostnadsskydd.</p>
+        <span class="tag">Du får bokningsbekräftelse i realtid</span>
+      </div>
+      <div class="agent-card">
+        <div class="emoji">&#9878;&#65039;</div>
+        <h3>Margareta &mdash; Advokatbyrå</h3>
+        <p><strong>Själ:</strong> Trygg proffs, 20 år i receptionen. Seriös, stabil vid känsliga ämnen.</p>
+        <p><strong>Hjärna:</strong> Juristspecialiseringar, konsultationsbokning, rättsskydd, akuthantering.</p>
+        <span class="tag">Du får ärendesammanfattning &mdash; inget försvinner</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VAD DU FAR -->
+<section class="bg-dark">
+  <div class="container">
+    <h2>Vad du får</h2>
+    <p class="section-lead">Allt ingår i implementationen. Ingen dold kostnad.</p>
+    <div class="delivery-grid">
+      <div class="delivery-item">
+        <h4>Röstagent</h4>
+        <p>Skräddarsydd med personlighet</p>
+      </div>
+      <div class="delivery-item">
+        <h4>Affärslogik</h4>
+        <p>Meny, priser, regler, tider</p>
+      </div>
+      <div class="delivery-item">
+        <h4>Telefonnummer</h4>
+        <p>Nytt eller portering av ditt</p>
+      </div>
+      <div class="delivery-item">
+        <h4>Realtidsrapportering</h4>
+        <p>Telegram, SMS, e-post, dashboard &mdash; du väljer</p>
+      </div>
+      <div class="delivery-item">
+        <h4>Inspelning + transkript</h4>
+        <p>Varje samtal dokumenterat</p>
+      </div>
+      <div class="delivery-item">
+        <h4>Vidarekoppling</h4>
+        <p>Till personal &mdash; med kontext</p>
+      </div>
+      <div class="delivery-item">
+        <h4>Dashboard</h4>
+        <p>Statistik och samtalshistorik</p>
+      </div>
+      <div class="delivery-item">
+        <h4>Web-widget</h4>
+        <p>För din hemsida (valfritt)</p>
+      </div>
+      <div class="delivery-item">
+        <h4>Löpande anpassning</h4>
+        <p>Vi finjusterar baserat på data</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="bg-dark" style="padding-top: 0;">
+  <div class="container">
+    <h2>Teknisk stack</h2>
+    <div class="stack-row">
+      <span class="stack-tag">ElevenLabs Conversational AI</span>
+      <span class="stack-tag">Telnyx SIP Trunk</span>
+      <span class="stack-tag">46elks SMS</span>
+      <span class="stack-tag">Telegram Bot API</span>
+      <span class="stack-tag">Python</span>
+      <span class="stack-tag">Flask + SQLite</span>
+      <span class="stack-tag">VPS Ubuntu</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRIS -->
+<section class="bg-white" id="pris">
+  <div class="container">
+    <h2>Pris</h2>
+    <p class="section-lead">Tydliga nivåer. Inga dolda kostnader.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Start</h3>
+        <div class="price">2 900 kr</div>
+        <div class="price-sub">per månad</div>
+        <ul>
+          <li>1 agent</li>
+          <li>500 samtal/mån</li>
+          <li>Telegram-notiser</li>
+          <li>Dashboard</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <h3>Standard</h3>
+        <div class="price">5 900 kr</div>
+        <div class="price-sub">per månad</div>
+        <ul>
+          <li>1 agent</li>
+          <li>2 000 samtal/mån</li>
+          <li>Alla kanaler (Telegram + SMS + e-post + dashboard)</li>
+          <li>CRM-integration</li>
+          <li>Web-widget</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3>Enterprise</h3>
+        <div class="price">Offert</div>
+        <div class="price-sub">&nbsp;</div>
+        <ul>
+          <li>Flera agenter</li>
+          <li>Obegränsade samtal</li>
+          <li>API-access</li>
+          <li>SLA</li>
+          <li>Dedicerad support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ONBOARDING -->
+<section class="bg-light">
+  <div class="container">
+    <h2>Onboarding &mdash; dagar, inte månader</h2>
+    <div class="onboard-steps">
+      <div class="onboard-step">
+        <div class="num">1</div>
+        <div>
+          <h3>Discovery</h3>
+          <p>1 timme &mdash; vi lyssnar på dina behov</p>
+        </div>
+      </div>
+      <div class="onboard-step">
+        <div class="num">2</div>
+        <div>
+          <h3>Design</h3>
+          <p>1&ndash;2 dagar &mdash; bygger Själ + Hjärna</p>
+        </div>
+      </div>
+      <div class="onboard-step">
+        <div class="num">3</div>
+        <div>
+          <h3>Test</h3>
+          <p>1 dag &mdash; du provringer, vi justerar</p>
+        </div>
+      </div>
+      <div class="onboard-step">
+        <div class="num">4</div>
+        <div>
+          <h3>Go live</h3>
+          <p>1 dag &mdash; kopplar till ditt nummer</p>
+        </div>
+      </div>
+      <div class="onboard-step">
+        <div class="num">5</div>
+        <div>
+          <h3>Optimering</h3>
+          <p>Löpande &mdash; finjusterar baserat på riktiga samtal</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="bg-white" id="faq">
+  <div class="container">
+    <h2>Vanliga frågor</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Låter det som en robot?</h3>
+        <p>Nej. ElevenLabs röst-AI är bland det bästa som finns. Kunderna märker sällan skillnad.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Kan agenten hantera dialekter?</h3>
+        <p>Ja. Transkribering och förståelse fungerar på svenska, inklusive regionala varianter.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Vad händer om agenten inte kan svara?</h3>
+        <p>Den kopplar till personal. Alltid med kontext om vad samtalet handlat om.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Kan jag lyssna på samtalen?</h3>
+        <p>Ja. Inspelning + transkript finns i dashboarden och kan skickas via webhook.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Hur snabbt är ni live?</h3>
+        <p>Normalt 3&ndash;5 arbetsdagar från start till live.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Kan jag byta röst/personlighet?</h3>
+        <p>Ja, när som helst. Vi justerar Själen utan att röra Hjärnan.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Funkar det med mitt befintliga nummer?</h3>
+        <p>Ja. Vi porterar ditt nummer eller sätter upp ett nytt.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Hur väljer jag hur jag får notiser?</h3>
+        <p>Vid onboarding väljer du kanal &mdash; Telegram, SMS, e-post eller alla tre. Ändras när du vill.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT / FOOTER -->
+<footer id="kontakt">
+  <div class="container">
+    <h2>Redo att ge ditt företag en röst?</h2>
+    <p class="contact-line">Henrik von Scheele</p>
+    <p class="contact-line"><a href="tel:+46703610180">+46 70-361 01 80</a></p>
+    <p class="contact-line"><a href="mailto:Henrik@balby.se">Henrik@balby.se</a></p>
+    <p class="contact-line" style="margin-top: 12px; color: rgba(255,255,255,0.4);">Bålby Säteri västra flygeln, 695 95 Hasselfors</p>
+    <div class="footer-bottom">&copy; 2026 PLING. AI-telefonagenter med personlighet.</div>
+  </div>
+</footer>
+
+</body>
+</html>
